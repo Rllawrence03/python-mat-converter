@@ -21,7 +21,7 @@ def mat_to_dataframes(path=None, show_tree=True):
     load_dotenv()
     path = path or os.getenv("DIR")
 
-    raw = hdf5storage.loadmat(path)
+    raw = hdf5storage.loadmat(path) # type: ignore
 
     def mat_to_py(obj):
         """Recursively normalize MATLAB struct/cell data loaded via EITHER
@@ -33,7 +33,7 @@ def mat_to_dataframes(path=None, show_tree=True):
             return x.decode() if isinstance(x, bytes) else x
 
         if isinstance(obj, mat_struct):  # scipy struct
-            return {name: mat_to_py(getattr(obj, name)) for name in obj._fieldnames}
+            return {name: mat_to_py(getattr(obj, name)) for name in obj._fieldnames} # type: ignore
 
         if isinstance(obj, MatlabOpaque):
             # MATLAB `string` arrays / classdef objects are stored as MCOS references
@@ -56,7 +56,7 @@ def mat_to_dataframes(path=None, show_tree=True):
             return {"_matlab_unsupported_fields": list(names)}
 
         if isinstance(obj, np.void):  # a single hdf5storage struct-array record
-            return {name: mat_to_py(obj[name]) for name in obj.dtype.names}
+            return {name: mat_to_py(obj[name]) for name in obj.dtype.names} # type: ignore
 
         if isinstance(obj, np.ndarray):
             if obj.dtype.names:  # hdf5storage struct array
